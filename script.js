@@ -25,7 +25,7 @@ async function highlightPoints(points, className) {
         .attr("cy", d => d.y)
         .attr("r", 5)
         .attr("class", className);
-    await new Promise(resolve => setTimeout(resolve, duration));
+    await new Promise(resolve => setTimeout(resolve, 0));
 }
 
 async function highlightSubproblemArea(xStart, xEnd, color, className) {
@@ -80,6 +80,16 @@ function bruteForce(points) {
     return closestPair;
 }
 
+function drawLine(svgElement, point1, point2, className) {
+    svgElement.append("line")
+        .attr("x1", point1.x)
+        .attr("y1", point1.y)
+        .attr("x2", point2.x)
+        .attr("y2", point2.y)
+        .attr("class", className);
+}
+
+
 async function closestPairRec(pointsX, pointsY, leftBoundary, rightBoundary) {
     await highlightSubproblemArea(leftBoundary, rightBoundary, "green", "right-subproblem-area");
 
@@ -117,22 +127,25 @@ async function closestPairRec(pointsX, pointsY, leftBoundary, rightBoundary) {
     const pairLeft = await closestPairRec(pointsX.slice(0, midIndex), pointsY.filter(p => p.x < midPointX), leftSubproblemLeftBoundary, leftSubproblemRightBoundary);
     // await unhighlightSubproblemArea("left-subproblem-area");
 
+
     // Highlight, process, and unhighlight the right subproblem
     // await highlightSubproblemArea(rightSubproblemLeftBoundary, rightSubproblemRightBoundary, "green", "right-subproblem-area");
     const pairRight = await closestPairRec(pointsX.slice(midIndex), pointsY.filter(p => p.x >= midPointX), rightSubproblemLeftBoundary, rightSubproblemRightBoundary);
+
     await unhighlightSubproblemArea("right-subproblem-area");
+
 
 
     // After finding pairLeft and pairRight
     let closestPair = pairLeft;
     let minDist = distance(pairLeft[0], pairLeft[1]);
-    await updateClosestPair(closestPair); // Highlight the current closest pair
 
     if (minDist > distance(pairRight[0], pairRight[1])) {
         minDist = distance(pairRight[0], pairRight[1]);
         closestPair = pairRight;
-        await updateClosestPair(closestPair); // Update if the right pair is closer
     }
+
+    await updateClosestPair(closestPair);
 
     // Highlight the strip area
     const stripLeft = midPoint.x - minDist;
