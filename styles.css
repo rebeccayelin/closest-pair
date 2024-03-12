@@ -1,0 +1,57 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: auto;
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.5;
+  width: 800px;
+}
+
+svg {
+  display: block;
+  margin: auto;
+  border: 0.5px solid grey;
+  background-color: #ffffe0; /* Light yellow color */
+  border-radius: 10px; /* Rounded borders */
+}
+
+.container {
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: "Montserrat", sans-serif;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+
+.point {
+  fill: black;
+}
+
+.closest-pair {
+  fill: red;
+}
+
+line {
+  stroke: green;
+  stroke-width: 2;
+}
+
+.division-line {
+  stroke: blue;
+  stroke-dasharray: 4;
+  stroke-width: 1;
+}
