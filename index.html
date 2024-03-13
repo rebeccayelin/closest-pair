@@ -17,21 +17,27 @@
     <div class="container">
       <h1>Closest Pair of Points</h1>
       <p>
-        We visualize a divide-and-conquer algorithm for finding a pair of points
-        with the smallest distance between them. The dashed blue line indicates
-        the boundary between the left and right sub-problems. The sub-problem
-        under consideration at each time step is highlighted in green, and the
-        strip examined during the merge step is in blue.
-        The closest pair of points seen so far in the current subproblem is
-        marked in red, and the final closest pair is connected with a green line.
+        We visualize a divide-and-conquer algorithm for finding the closest pair
+        of points in the plane.
       </p>
       <p>
         <b>Instructions: </b>
         Click on the canvas to draw points. Press "return" to (re-)run the
-        animation and "delete" to clear the canvas.
+        animation.
+        <!-- and "delete" to clear the canvas. -->
       </p>
       <svg width="800" height="600" style="border: 1px solid black"></svg>
-      <br /><br /><br />
+      <p>
+        The dashed lines (red) indicate the boundaries between
+        the sub-problems, where their closest pair of points are connected
+        by a grey line. The current subproblem being considered
+        is highlighted in pink, and when we compare between results
+        in left and right sub-problems, we highlight them in mustard.
+        The strip considered in the merge step is highlighted in lavender.
+      </p>
+      <p style="text-align: center">made with &#9825; and chatgpt by bex</p>
+      <br />
+      <br />
     </div>
   </body>
   <script src="script.js"></script>

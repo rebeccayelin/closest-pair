@@ -1,14 +1,16 @@
 const points = [];
-const svg = d3.select("svg");
-const duration = 1000;
 
+const svg = d3.select("svg");
+const duration = 1200;
+
+// add points on click
 svg.on("click", function (event) {
     const coords = d3.pointer(event);
     points.push({ x: coords[0], y: coords[1] });
     svg.append("circle")
         .attr("cx", coords[0])
         .attr("cy", coords[1])
-        .attr("r", 5)
+        .attr("r", 4)
         .attr("class", "point");
 });
 
@@ -16,53 +18,31 @@ function distance(p1, p2) {
     return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
 }
 
-async function highlightPoints(points, className) {
-    svg.selectAll(`.${className}`)
-        .data(points)
-        .enter()
-        .append("circle")
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y)
-        .attr("r", 5)
-        .attr("class", className);
-    await new Promise(resolve => setTimeout(resolve, 0));
+function drawPair(pair) {
+    return svg.append("line")
+        .attr("x1", pair[0].x)
+        .attr("y1", pair[0].y)
+        .attr("x2", pair[1].x)
+        .attr("y2", pair[1].y)
+        .attr("class", "pair-line");
 }
 
-async function highlightSubproblemArea(xStart, xEnd, color, className) {
-    console.log(xStart, xEnd);
-    const width = Math.max(0, xEnd - xStart); // Ensure width is non-negative
-
-    // Highlight the subproblem area with a rectangle
-    svg.append("rect")
+function highlightSubproblem(xStart, xEnd, className) {
+    return svg.append("rect")
         .attr("x", xStart)
         .attr("y", 0)
-        .attr("width", width)
+        .attr("width", Math.max(0, xEnd - xStart))
         .attr("height", svg.attr("height"))
-        .attr("fill", color)
         .attr("class", className)
-        .attr("opacity", 0.3);
-
-    await new Promise(resolve => setTimeout(resolve, duration)); // Add delay to visualize
 }
 
-async function unhighlightSubproblemArea(className) {
-    // Remove the highlight from the subproblem area
-    svg.selectAll(`.${className}`).remove();
-}
-
-async function unhighlightSubproblemArea(className) {
-    // Remove the highlight from the subproblem area
-    svg.selectAll(`.${className}`).remove();
-}
-
-async function drawLineBetweenPoints(point1, point2, className) {
-    svg.append("line")
-        .attr("x1", point1.x)
-        .attr("y1", point1.y)
-        .attr("x2", point2.x)
-        .attr("y2", point2.y)
-        .attr("class", className);
-    await new Promise(resolve => setTimeout(resolve, duration));
+function drawBoundary(x) {
+    return svg.append("line")
+        .attr("x1", x)
+        .attr("y1", 0)
+        .attr("x2", x)
+        .attr("y2", svg.attr("height"))
+        .attr("class", "division-line");
 }
 
 function bruteForce(points) {
@@ -80,85 +60,67 @@ function bruteForce(points) {
     return closestPair;
 }
 
-function drawLine(svgElement, point1, point2, className) {
-    svgElement.append("line")
-        .attr("x1", point1.x)
-        .attr("y1", point1.y)
-        .attr("x2", point2.x)
-        .attr("y2", point2.y)
-        .attr("class", className);
-}
-
-
 async function closestPairRec(pointsX, pointsY, leftBoundary, rightBoundary) {
-    await highlightSubproblemArea(leftBoundary, rightBoundary, "green", "right-subproblem-area");
+    const subproblem = highlightSubproblem(leftBoundary, rightBoundary, "subproblem");
+    await new Promise(resolve => setTimeout(resolve, duration));
 
     if (pointsX.length <= 3) {
-        let closestPair = bruteForce(pointsX);
-        await highlightPoints(closestPair, 'closest-pair');
-        await unhighlightSubproblemArea("right-subproblem-area");
-        return closestPair;
+        const closestPair = bruteForce(pointsX);
+        const pair = drawPair(closestPair);
+        await new Promise(resolve => setTimeout(resolve, duration));
+        subproblem.remove();
+        return [closestPair, pair];
     }
 
-    const midIndex = Math.floor(pointsX.length / 2);
-    const midPoint = pointsX[midIndex];
-    const midPointX = pointsX[midIndex].x;
+    const midIdx = Math.floor(pointsX.length / 2);
+    const midPoint = pointsX[midIdx];
+    const midPointX = pointsX[midIdx].x;
+    const boundary = drawBoundary(midPointX);
+    await new Promise(resolve => setTimeout(resolve, duration));
 
-    // draw division line
-    const line = svg.append("line")
-        .attr("x1", midPointX)
-        .attr("y1", 0)
-        .attr("x2", midPoint.x)
-        .attr("y2", svg.attr("height"))
-        .attr("class", "division-line");
+    subproblem.remove();
+
+    // left subproblem
+    const leftSubproblemRightBoundary = midPointX;
+    const leftSubproblemLeftBoundary = leftBoundary !== null ? leftBoundary : pointsX[0].x;
+    const [pairLeft, leftLine] = await closestPairRec(pointsX.slice(0, midIdx), pointsY.filter(p => p.x < midPointX), leftSubproblemLeftBoundary, leftSubproblemRightBoundary);
+
+    // right subproblem
+    const rightSubproblemLeftBoundary = midPointX;
+    const rightSubproblemRightBoundary = rightBoundary !== null ? rightBoundary : pointsX[pointsX.length - 1].x;
+    const [pairRight, rightLine] = await closestPairRec(pointsX.slice(midIdx), pointsY.filter(p => p.x >= midPointX), rightSubproblemLeftBoundary, rightSubproblemRightBoundary);
+
+    const leftBlock = highlightSubproblem(leftSubproblemLeftBoundary, leftSubproblemRightBoundary, "left-right");
+    const rightBlock = highlightSubproblem(rightSubproblemLeftBoundary, rightSubproblemRightBoundary, "left-right");
 
     await new Promise(resolve => setTimeout(resolve, duration));
 
-    await unhighlightSubproblemArea("right-subproblem-area");
-
-    const leftSubproblemRightBoundary = midPointX;
-    const rightSubproblemLeftBoundary = midPointX;
-
-    const leftSubproblemLeftBoundary = leftBoundary !== null ? leftBoundary : pointsX[0].x;
-    const rightSubproblemRightBoundary = rightBoundary !== null ? rightBoundary : pointsX[pointsX.length - 1].x;
-
-    // Highlight, process, and unhighlight the left subproblem
-    // await highlightSubproblemArea(leftSubproblemLeftBoundary, leftSubproblemRightBoundary, "pink", "left-subproblem-area");
-    const pairLeft = await closestPairRec(pointsX.slice(0, midIndex), pointsY.filter(p => p.x < midPointX), leftSubproblemLeftBoundary, leftSubproblemRightBoundary);
-    // await unhighlightSubproblemArea("left-subproblem-area");
-
-
-    // Highlight, process, and unhighlight the right subproblem
-    // await highlightSubproblemArea(rightSubproblemLeftBoundary, rightSubproblemRightBoundary, "green", "right-subproblem-area");
-    const pairRight = await closestPairRec(pointsX.slice(midIndex), pointsY.filter(p => p.x >= midPointX), rightSubproblemLeftBoundary, rightSubproblemRightBoundary);
-
-    await unhighlightSubproblemArea("right-subproblem-area");
-
-
-
-    // After finding pairLeft and pairRight
+    // comapre left and right
     let closestPair = pairLeft;
+    let bestLine = leftLine;
+    let notBestLine = rightLine;
     let minDist = distance(pairLeft[0], pairLeft[1]);
 
     if (minDist > distance(pairRight[0], pairRight[1])) {
         minDist = distance(pairRight[0], pairRight[1]);
         closestPair = pairRight;
+        bestLine = rightLine;
+        notBestLine = leftLine;
     }
 
-    await updateClosestPair(closestPair);
+    // update closest pair
+    notBestLine.remove();
+    await new Promise(resolve => setTimeout(resolve, duration));
 
-    // Highlight the strip area
+    // highlight the strip area for merging
     const stripLeft = midPoint.x - minDist;
     const stripRight = midPoint.x + minDist;
 
-    const stripRect = svg.append("rect")
-        .attr("x", stripLeft)
-        .attr("y", 0)
-        .attr("width", stripRight - stripLeft)
-        .attr("height", svg.attr("height"))
-        .attr("fill", "blue")
-        .attr("opacity", 0.2);
+    const stripBlock = highlightSubproblem(stripLeft, stripRight, "strip");
 
+    await new Promise(resolve => setTimeout(resolve, duration));
+
+    let changed = false;
     // Check the strip in the middle
     const strip = pointsY.filter(p => Math.abs(p.x - midPoint.x) < minDist);
     for (let i = 0; i < strip.length; ++i) {
@@ -166,34 +128,24 @@ async function closestPairRec(pointsX, pointsY, leftBoundary, rightBoundary) {
             if (distance(strip[i], strip[j]) < minDist) {
                 minDist = distance(strip[i], strip[j]);
                 closestPair = [strip[i], strip[j]];
-                await updateClosestPair(closestPair);
+                changed = true;
             }
         }
     }
 
-    await new Promise(resolve => setTimeout(resolve, duration)); // Delay to visualize strip checking
+    if (changed) {
+        leftLine.remove();
+        rightLine.remove();
+        bestLine = drawPair(closestPair);
+        await new Promise(resolve => setTimeout(resolve, duration));
+    }
 
-    stripRect.remove(); // Remove the strip highlight
-    line.remove();  // Remove the division line
-
-    await highlightPoints(closestPair, 'closest-pair');
-    return closestPair;
-}
-
-async function updateClosestPair(closestPair) {
-    svg.selectAll(".closest-pair").remove(); // Remove existing highlights
-
-    // Highlight new closest pair
-    svg.selectAll(".closest-pair")
-        .data(closestPair)
-        .enter()
-        .append("circle")
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y)
-        .attr("r", 5)
-        .attr("class", "closest-pair");
-
-    await new Promise(resolve => setTimeout(resolve, duration)); // Add delay to visualize update
+    leftBlock.remove();
+    rightBlock.remove();
+    boundary.remove(); // Remove the division line
+    stripBlock.remove(); // Remove the strip highlight
+    await new Promise(resolve => setTimeout(resolve, duration));
+    return [closestPair, bestLine];
 }
 
 function clearScreen() {
@@ -202,21 +154,11 @@ function clearScreen() {
 
 document.addEventListener('keydown', async (event) => {
     if (event.key === 'Enter') {
-        // remove existing lines
-        svg.selectAll(".closest-pair-line").remove();
+        svg.selectAll(".pair-line").remove();
         svg.selectAll(".division-line").remove();
-        // unhighlight existing points
-        svg.selectAll(".closest-pair").remove();
 
         const pointsX = points.slice().sort((a, b) => a.x - b.x);
         const pointsY = points.slice().sort((a, b) => a.y - b.y);
         const closestPair = await closestPairRec(pointsX, pointsY, null, null);
-
-        await drawLineBetweenPoints(closestPair[0], closestPair[1], 'closest-pair-line');
-    }
-
-    if (event.key == 'Delete') {
-        clearScreen();
-        points = []; // Clear the points array
     }
 });
