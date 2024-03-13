@@ -13,7 +13,7 @@ runButton.addEventListener('click', runButtonClicked);
 
 function randomButtonClicked() {
     for (i = 0; i < 10; i++) {
-        points.push({ x: Math.random() * 500 + 50, y: Math.random() * 300 + 50 });
+        points.push({ x: Math.random() * 600 + 50, y: Math.random() * 300 + 50 });
         svg.append("circle")
             .attr("cx", points[i].x)
             .attr("cy", points[i].y)
