@@ -1,7 +1,36 @@
-const points = [];
+let points = [];
+const duration = 1200;
 
 const svg = d3.select("svg");
-const duration = 1200;
+
+const randomButton = document.getElementById('random');
+const clearButton = document.getElementById('clear');
+const runButton = document.getElementById('run');
+
+randomButton.addEventListener('click', randomButtonClicked);
+clearButton.addEventListener('click', clearButtonClicked);
+runButton.addEventListener('click', runButtonClicked);
+
+function randomButtonClicked() {
+    for (i = 0; i < 10; i++) {
+        points.push({ x: Math.random() * 500 + 50, y: Math.random() * 300 + 50 });
+        svg.append("circle")
+            .attr("cx", points[i].x)
+            .attr("cy", points[i].y)
+            .attr("r", 3)
+            .attr("class", "point");
+    }
+}
+
+// Function linked to the second button
+function clearButtonClicked() {
+    points = [];
+    svg.selectAll("*").remove(); // Selects and removes all child elements in the SVG
+}
+
+function runButtonClicked() {
+    run();
+}
 
 // add points on click
 svg.on("click", function (event) {
@@ -10,7 +39,7 @@ svg.on("click", function (event) {
     svg.append("circle")
         .attr("cx", coords[0])
         .attr("cy", coords[1])
-        .attr("r", 4)
+        .attr("r", 3)
         .attr("class", "point");
 });
 
@@ -19,7 +48,7 @@ function distance(p1, p2) {
 }
 
 function drawPair(pair) {
-    return svg.append("line")
+    return svg.append("line", svg.firstChild)
         .attr("x1", pair[0].x)
         .attr("y1", pair[0].y)
         .attr("x2", pair[1].x)
@@ -148,17 +177,25 @@ async function closestPairRec(pointsX, pointsY, leftBoundary, rightBoundary) {
     return [closestPair, bestLine];
 }
 
-function clearScreen() {
-    svg.selectAll("*").remove(); // Selects and removes all child elements in the SVG
-}
-
 document.addEventListener('keydown', async (event) => {
     if (event.key === 'Enter') {
-        svg.selectAll(".pair-line").remove();
-        svg.selectAll(".division-line").remove();
+        run();
+    }
 
-        const pointsX = points.slice().sort((a, b) => a.x - b.x);
-        const pointsY = points.slice().sort((a, b) => a.y - b.y);
-        const closestPair = await closestPairRec(pointsX, pointsY, null, null);
+    if (event.code === 'Space') {
+        randomButtonClicked();
+    }
+
+    if (event.code === 'Delete') {
+        randomButtonClicked();
     }
 });
+
+function run() {
+    svg.selectAll(".pair-line").remove();
+    svg.selectAll(".division-line").remove();
+
+    const pointsX = points.slice().sort((a, b) => a.x - b.x);
+    const pointsY = points.slice().sort((a, b) => a.y - b.y);
+    closestPairRec(pointsX, pointsY, null, null);
+}

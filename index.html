@@ -17,27 +17,49 @@
     <div class="container">
       <h1>Closest Pair of Points</h1>
       <p>
-        We visualize a divide-and-conquer algorithm for finding the closest pair
-        of points in the plane.
+        A visualization of a
+        <a
+          href="https://www.geeksforgeeks.org/closest-pair-of-points-using-divide-and-conquer-algorithm/"
+          >divide-and-conquer algorithm</a
+        >
+        for finding the closest pair of points in the plane.
       </p>
       <p>
         <b>Instructions: </b>
-        Click on the canvas to draw points. Press "return" to (re-)run the
-        animation.
-        <!-- and "delete" to clear the canvas. -->
+        Click on the canvas to create points manually. Use the buttons to
+        perform various actions: generate a random set of 10 points, run the
+        algorithm, or clear the canvas. Alternatively, press "space", "enter" or
+        "delete".
       </p>
-      <svg width="800" height="600" style="border: 1px solid black"></svg>
+      <div class="buttons">
+        <button id="random">random</button>
+        <button id="run">run</button>
+        <button id="clear">clear</button>
+      </div>
+      <svg width="700" height="400" style="border: 0.5px solid grey"></svg>
       <p>
-        The dashed lines (red) indicate the boundaries between
-        the sub-problems, where their closest pair of points are connected
-        by a grey line. The current subproblem being considered
-        is highlighted in pink, and when we compare between results
-        in left and right sub-problems, we highlight them in mustard.
-        The strip considered in the merge step is highlighted in lavender.
+        <strong>Annotations:</strong>
+        The red dashed lines delineate the boundaries between the subproblems,
+        within which the closest pairs of points are connected by a green line.
+        The subproblem currently under examination is highlighted in teal. When
+        comparing results from the left and right subproblems, they are
+        highlighted in peach. During the merge step, the strip being considered
+        is shown in lavender.
       </p>
-      <p style="text-align: center">made with &#9825; and chatgpt by bex</p>
-      <br />
-      <br />
+      <p>
+        <strong>Next Steps:</strong>
+        What would make the visualization more informative? Labels? Arrows? A
+        few scenarios need to be handled interface-wise, such as pressing the
+        buttons during an ongoing animation. In addition, it would be useful to
+        introduce a feature to adjust the animation speed. Of course, some
+        refactoring would be nice — the code is a bit of a hot mess.
+      </p>
+      <footer>
+        <p style="text-align: center">
+          made by <a href="">bex</a> with &#9825; and with the unwavering
+          support of chatgpt
+        </p>
+      </footer>
     </div>
   </body>
   <script src="script.js"></script>
