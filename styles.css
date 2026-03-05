@@ -1,0 +1,352 @@
+/* --- Variables: single cohesive palette --- */
+:root {
+  /* Surfaces & text */
+  --bg: #f1f5f9;
+  --surface: #ffffff;
+  --surface-alt: #f8fafc;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --text-muted: #64748b;
+
+  /* Primary (run, links, subproblem, closest pair) */
+  --accent: #0d9488;
+  --accent-hover: #0f766e;
+  --accent-subtle: rgba(13, 148, 136, 0.12);
+
+  /* Canvas algorithm colors (same family as accent + one contrast) */
+  --canvas-subproblem: #0d9488;
+  --canvas-subproblem-opacity: 0.22;
+  --canvas-left-right: #f97316;
+  --canvas-left-right-opacity: 0.35;
+  --canvas-strip: #7c3aed;
+  --canvas-strip-opacity: 0.4;
+  --canvas-division: #475569;
+  --canvas-pair: #0d9488;
+  --canvas-point: #0f172a;
+
+  /* Buttons (derive from palette) */
+  --btn-random: #0369a1;
+  --btn-random-hover: #0284c7;
+  --btn-step: #475569;
+  --btn-step-hover: #334155;
+  --btn-clear: #b91c1c;
+  --btn-clear-hover: #991b1b;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.08);
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* --- Base --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 1rem 3rem;
+}
+
+.container {
+  width: 100%;
+  max-width: 700px;
+  padding: 0 0.25rem;
+}
+
+.container h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.container > p {
+  margin: 0 0 1rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.card {
+  padding: 0.85rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.card strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* --- Controls --- */
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+button {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-random {
+  background: var(--btn-random);
+}
+
+.btn-random:hover:not(:disabled) {
+  background: var(--btn-random-hover);
+}
+
+.btn-run {
+  background: var(--accent);
+}
+
+.btn-run:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.btn-step {
+  background: var(--btn-step);
+}
+
+.btn-step:hover:not(:disabled) {
+  background: var(--btn-step-hover);
+}
+
+.btn-clear {
+  background: var(--btn-clear);
+}
+
+.btn-clear:hover:not(:disabled) {
+  background: var(--btn-clear-hover);
+}
+
+.btn-run .btn-icon {
+  display: inline-block;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.speed-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.speed-label-left,
+.speed-label-right {
+  font-weight: 500;
+  color: var(--text);
+  min-width: 2.5rem;
+}
+
+.speed-label-left {
+  text-align: right;
+}
+
+.speed-label-right {
+  text-align: left;
+}
+
+.speed-control input[type="range"] {
+  width: 140px;
+  height: 6px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* --- Step annotation (screen reader only; visual is on canvas) --- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* On-canvas annotation (inside SVG) */
+.canvas-annotation-bg {
+  fill: var(--surface);
+  fill-opacity: 0.96;
+  stroke: var(--text-muted);
+  stroke-width: 1;
+  stroke-opacity: 0.5;
+  stroke-dasharray: 2 2;
+  rx: 8;
+}
+
+.canvas-annotation-text {
+  fill: var(--text);
+  font-size: 14px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.canvas-annotation-meta {
+  fill: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-sans);
+  font-weight: 400;
+}
+
+/* --- Canvas --- */
+.container > svg {
+  display: block;
+  margin: 0 auto 1.25rem;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  cursor: crosshair;
+}
+
+/* --- SVG elements (use palette variables) --- */
+.point {
+  fill: var(--canvas-point);
+}
+
+.pair-line {
+  stroke: var(--canvas-pair);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  opacity: 1;
+}
+
+.division-line {
+  stroke: var(--canvas-division);
+  stroke-linecap: round;
+  opacity: 0.9;
+  stroke-dasharray: 6;
+  stroke-width: 2;
+}
+
+.division-line-faint {
+  stroke: var(--canvas-division);
+  stroke-linecap: round;
+  opacity: 0.35;
+  stroke-dasharray: 4;
+  stroke-width: 1;
+}
+
+.left-right {
+  fill: var(--canvas-left-right);
+  fill-opacity: var(--canvas-left-right-opacity);
+}
+
+.subproblem {
+  fill: var(--canvas-subproblem);
+  fill-opacity: var(--canvas-subproblem-opacity);
+}
+
+.strip {
+  fill: var(--canvas-strip);
+  fill-opacity: var(--canvas-strip-opacity);
+}
+
+.highlight-label {
+  fill: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  pointer-events: none;
+}
+
+.strip-label-bg {
+  fill: var(--surface);
+  fill-opacity: 0.96;
+  stroke: var(--text-muted);
+  stroke-width: 1;
+  stroke-opacity: 0.5;
+  stroke-dasharray: 2 2;
+}
+
+/* --- kbd --- */
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  font-weight: 500;
+  padding: 0.2em 0.5em;
+  border-radius: 4px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+/* --- Links --- */
+a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* --- Footer --- */
+footer {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+footer p {
+  margin: 0;
+}
+
+footer a {
+  font-weight: 500;
+}

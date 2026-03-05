@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Closest Pair of Points</title>
+    <!-- scripts -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- styling -->
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Closest Pair of Points</h1>
+      <p>
+        A visualization of a
+        <a
+          href="https://www.geeksforgeeks.org/closest-pair-of-points-using-divide-and-conquer-algorithm/"
+          >divide-and-conquer algorithm</a
+        >
+        for finding the closest pair of points in the plane.
+      </p>
+      <p class="card">
+        <strong>Instructions</strong> — Click on the canvas to add points. Use the buttons to add 10 random
+        points, run the algorithm, or clear the canvas.         Keyboard: <kbd>Space</kbd> = random, <kbd>Enter</kbd> = run/play,
+        <kbd>Delete</kbd> = clear, <kbd>←</kbd> <kbd>→</kbd> = step back/forward.
+        After running, use step buttons or arrows to move through the animation.
+      </p>
+      <div class="buttons">
+        <button id="random" class="btn-random" type="button">random</button>
+        <button id="step-back" class="btn-step" type="button" title="Step backward" aria-label="Step backward">◀ step</button>
+        <button id="run" class="btn-run" type="button" title="Play / Pause" aria-label="Play"><span class="btn-icon" aria-hidden="true">▶</span></button>
+        <button id="step-fwd" class="btn-step" type="button" title="Step forward" aria-label="Step forward">step ▶</button>
+        <button id="clear" class="btn-clear" type="button">clear</button>
+      </div>
+      <svg width="700" height="400" aria-label="Canvas for placing points"></svg>
+      <div class="speed-control">
+        <span class="speed-label-left">Slow</span>
+        <input type="range" id="speed" min="200" max="2000" value="400" step="100" aria-label="Animation speed" />
+        <span class="speed-label-right">Fast</span>
+      </div>
+      <div id="step-annotation" class="step-annotation sr-only" aria-live="polite"></div>
+      <p class="card">
+        <strong>Annotations</strong> — Dashed lines are division boundaries. The current subproblem is
+        teal; left and right (L / R) are coral; the merge strip is violet. The closest pair is drawn in teal.
+      </p>
+      <footer>
+        <p>Made by <a href="https://rebeccayelin.github.io/">Bex</a> with ♥ and with the unwavering support of LLMs</p>
+      </footer>
+    </div>
+  </body>
+  <script src="script.js"></script>
+</html>
